@@ -17,9 +17,11 @@ class Trend:
         self.df1 = None
         self.cols1 = None
         self.df1_metro = None
+        self.df1_rel_queries = None
         self.df2 = None
         self.cols2 = None
         self.df2_metro = None
+        self.df2_rel_queries = None
         self.agreement = None
         self.df = None
         self.agreement_geo = None
@@ -27,7 +29,7 @@ class Trend:
         self.terms_mean = None
         self.terms_sum = None
         self.df_T = None
-        self.df_copy = None
+        self.geo_us = None
         self.symptoms1_df()
         self.symptoms2_df()
         self.merge_df()
@@ -46,6 +48,7 @@ class Trend:
         self.cols1 = pd.DatetimeIndex.to_frame(self.df1.axes[0])
         self.df1.insert(loc=0, column='Date', value=self.cols1)
         self.df1_metro = pytrend.interest_by_region(resolution='DMA', inc_geo_code=True)
+        self.df1_rel_queries = pytrend.related_queries()
 
     def symptoms2_df(self):
         kw_list2 = ['dinged', 'bell-ringer', 'bell rung', 'football', 'NFL']
@@ -54,6 +57,7 @@ class Trend:
         self.cols2 = pd.DatetimeIndex.to_frame(self.df2.axes[0])
         self.df2.insert(loc=0, column='Date', value=self.cols2)
         self.df2_metro = pytrend.interest_by_region(resolution='DMA', inc_geo_code=True)
+        self.df2_rel_queries = pytrend.related_queries()
 
     def merge_df(self):
         self.agreement = pd.concat([self.df1.Date, self.df2.Date], axis=1)
@@ -72,13 +76,14 @@ class Trend:
 
         # Combine columns of similar content or rename variables.
         self.df['mTBI'] = self.df['mild traumatic brain injury'] + self.df['mTBI']
-        del self.df['mild traumatic brain injury']
+        self.df.drop(['mild traumatic brain injury'], axis=1, inplace=True)
 
         self.df['ding'] = self.df['ding'] + self.df['dinged']
-        del self.df['dinged']
+        self.df.drop(['dinged'], axis=1, inplace=True)
 
         self.df['bell'] = self.df['bell-ringer'] + self.df['bell rung']
-        del self.df['bell-ringer', 'bell rung']
+        self.df.drop(['bell-ringer'], axis=1, inplace=True)
+        self.df.drop(['bell rung'], axis=1, inplace=True)
 
         self.df = self.df.rename(columns={'post-concussion syndrome': 'pcs'})
 
@@ -94,6 +99,18 @@ class Trend:
         else:
             print("DataFrames' indices do not agree - double check values.")
 
+        self.df_geo['mTBI'] = self.df_geo['mild traumatic brain injury'] + self.df_geo['mTBI']
+        self.df_geo.drop(['mild traumatic brain injury'], axis=1, inplace=True)
+
+        self.df_geo['ding'] = self.df_geo['ding'] + self.df_geo['dinged']
+        self.df_geo.drop(['dinged'], axis=1, inplace=True)
+
+        self.df_geo['bell'] = self.df_geo['bell-ringer'] + self.df_geo['bell rung']
+        self.df_geo.drop(['bell-ringer'], axis=1, inplace=True)
+        self.df_geo.drop(['bell rung'], axis=1, inplace=True)
+
+        self.df_geo = self.df_geo.rename(columns={'post-concussion syndrome': 'pcs'})
+
     def data_prep(self):
         self.terms_mean = pd.DataFrame(self.df.mean())
         self.terms_sum = pd.DataFrame(self.df.sum())
@@ -104,6 +121,12 @@ class Trend:
 
         self.df_copy = self.df
         self.df_copy = self.df_copy.set_index('Date')
+
+        # Subset data frame to selected only locations in the United States.
+        # It appears that US cities are represented by integer values so those will be retained.
+        self.geo_us = self.df_geo
+        self.geo_us['geoCode'] = pd.to_numeric(self.geo_us['geoCode'], downcast='signed', errors='coerce')
+        self.geo_us = self.geo_us.dropna()
 
 
 # Example
