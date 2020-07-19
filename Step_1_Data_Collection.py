@@ -22,11 +22,17 @@ class Trend:
         self.df2_metro = None
         self.agreement = None
         self.df = None
+        self.agreement_geo = None
         self.df_geo = None
+        self.terms_mean = None
+        self.terms_sum = None
+        self.df_T = None
         self.symptoms1_df()
         self.symptoms2_df()
         self.merge_df()
         self.adjust_df()
+        self.merge_geo_df()
+        self.data_prep()
         analysis_date = datetime.now()
         print('Data was collected on ' + analysis_date.strftime("%B %d, %Y") + ' at ' +
               analysis_date.strftime("%H:%M:%S") + ' for searches between ' + start_date +
@@ -69,7 +75,25 @@ class Trend:
         self.df['ding'] = self.df['ding'] + self.df['dinged']
         self.df['bell'] = self.df['bell-ringer'] + self.df['bell rung']
 
+    def merge_geo_df(self):
+        self.agreement_geo = pd.concat([self.df1_metro.geoCode, self.df2_metro.geoCode], axis=1)
+        self.agreement_geo['Agree'] = np.where(self.agreement_geo.iloc[:, 0] ==
+                                               self.agreement_geo.iloc[:, 1], 1, 0)
 
+        if self.agreement_geo.shape[0] == self.agreement_geo['Agree'].count():
+            self.df_geo = pd.merge(left=self.df1_metro, right=self.df2_metro, how='left')
+            self.df_geo.set_index(self.df_geo.iloc[:, 0])
+            self.df_geo.insert(loc=1, column='Location', value=self.df1_metro.axes[0])
+        else:
+            print("DataFrames' indices do not agree - double check values.")
+
+    def data_prep(self):
+        self.terms_mean = pd.DataFrame(self.df.mean())
+        self.terms_sum = pd.DataFrame(self.df.sum())
+
+        self.df_T = self.df.T
+        self.df_T['Sum'] = self.df_T[1:13].sum(axis=1)
+        self.df_T = self.df_T.reset_index()
 
 # Example
 start_date = "2010-07-01"
