@@ -27,6 +27,7 @@ class Trend:
         self.terms_mean = None
         self.terms_sum = None
         self.df_T = None
+        self.df_copy = None
         self.symptoms1_df()
         self.symptoms2_df()
         self.merge_df()
@@ -71,9 +72,15 @@ class Trend:
 
         # Combine columns of similar content or rename variables.
         self.df['mTBI'] = self.df['mild traumatic brain injury'] + self.df['mTBI']
-        self.df['pcs'] = self.df['post-concussion syndrome']
+        del self.df['mild traumatic brain injury']
+
         self.df['ding'] = self.df['ding'] + self.df['dinged']
+        del self.df['dinged']
+
         self.df['bell'] = self.df['bell-ringer'] + self.df['bell rung']
+        del self.df['bell-ringer', 'bell rung']
+
+        self.df = self.df.rename(columns={'post-concussion syndrome': 'pcs'})
 
     def merge_geo_df(self):
         self.agreement_geo = pd.concat([self.df1_metro.geoCode, self.df2_metro.geoCode], axis=1)
@@ -94,6 +101,10 @@ class Trend:
         self.df_T = self.df.T
         self.df_T['Sum'] = self.df_T[1:13].sum(axis=1)
         self.df_T = self.df_T.reset_index()
+
+        self.df_copy = self.df
+        self.df_copy = self.df_copy.set_index('Date')
+
 
 # Example
 start_date = "2010-07-01"
