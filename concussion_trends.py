@@ -145,7 +145,7 @@ class Trend:
         plt.yticks(fontsize=12)
 
     def time_terms(self):
-        plt.figure(figsize=(20, 10))
+        plt.figure(figsize=(18, 8))
         sns.set_style('darkgrid')
         sns.lineplot(data=self.df_copy, dashes=False, palette='bright')
         plt.title('Concussion-Related Google Search Trends over Time', fontsize=20)
@@ -153,7 +153,6 @@ class Trend:
         plt.xticks(rotation=45, fontsize=12)
         plt.ylabel('Degree of Interest (Scaled)', fontsize=14)
         plt.yticks(fontsize=12)
-
 
 
     # Use latitude and longitude coordinates to map the DMAs in the US.
@@ -180,6 +179,7 @@ class Trend:
 
 
 # Example
+
 start_date = "2010-07-01"
 end_date = "2020-07-01"
 t = Trend(start_date, end_date)
@@ -197,3 +197,60 @@ def merge_geos():
     new_cols = ['Location', 'lat', 'long', 'concussion', 'mTBI', 'pcs', 'ding', 'football',
                 'NFL', 'bell']
     geo_coord = geo_coord[new_cols]
+
+    # Manually enter the missing ('NaN') values with corresponding values from the 'coordinates'
+    # and 'geo' data frames. If they are not available, approximate coordinates by identifying
+    # their location with a Google search.
+
+    geo_coord.at[geo_coord['Location'] == 'Anchorage AK', 'lat'] = 61.2181
+    geo_coord.at[geo_coord['Location'] == 'Anchorage AK', 'long'] = 149.9003
+
+    geo_coord.at[geo_coord['Location'] == 'Birmingham AL', 'lat'] = 33.50310
+    geo_coord.at[geo_coord['Location'] == 'Birmingham AL', 'long'] = -86.86964
+
+    geo_coord.at[geo_coord['Location'] == 'Birmingham (Anniston and Tuscaloosa) AL', 'lat'] = 33.5031
+    geo_coord.at[geo_coord['Location'] == 'Birmingham (Anniston and Tuscaloosa) AL', 'long'] = -86.86964
+
+    geo_coord.at[geo_coord['Location'] == 'Boston MA-Manchester NH', 'lat'] = 42.50102
+    geo_coord.at[geo_coord['Location'] == 'Boston MA-Manchester NH', 'long'] = -71.46049
+
+    geo_coord.at[geo_coord['Location'] == 'Fairbanks AK', 'lat'] = 64.8378
+    geo_coord.at[geo_coord['Location'] == 'Fairbanks AK', 'long'] = 147.7164
+
+    geo_coord.at[geo_coord['Location'] == 'Florence-Myrtle Beach SC', 'lat'] = 34.29878
+    geo_coord.at[geo_coord['Location'] == 'Florence-Myrtle Beach SC', 'long'] = -79.41977
+
+    geo_coord.at[geo_coord['Location'] == 'Greenville-Spartanburg SC-Asheville NC-Anderson SC', 'lat'] = 35.05266
+    geo_coord.at[geo_coord['Location'] == 'Greenville-Spartanburg SC-Asheville NC-Anderson SC', 'long'] = -82.69770
+
+    geo_coord.at[geo_coord['Location'] == 'Honolulu HI', 'lat'] = 21.3069
+    geo_coord.at[geo_coord['Location'] == 'Honolulu HI', 'long'] = 157.8583
+
+    geo_coord.at[geo_coord['Location'] == 'Juneau AK', 'lat'] = 58.3019
+    geo_coord.at[geo_coord['Location'] == 'Juneau AK', 'long'] = 134.4197
+
+    geo_coord.at[geo_coord['Location'] == 'Miami-Ft. Lauderdale FL', 'lat'] = 25.43902
+    geo_coord.at[geo_coord['Location'] == 'Miami-Ft. Lauderdale FL', 'long'] = -80.94063
+
+    geo_coord.at[geo_coord['Location'] == 'Montgomery (Selma) AL', 'lat'] = 32.05068
+    geo_coord.at[geo_coord['Location'] == 'Montgomery (Selma) AL', 'long'] = -86.76757
+
+    geo_coord.at[geo_coord['Location'] == 'Paducah KY-Cape Girardeau MO-Harrisburg-Mount Vernon IL', 'lat'] = 37.23529
+    geo_coord.at[geo_coord['Location'] == 'Paducah KY-Cape Girardeau MO-Harrisburg-Mount Vernon IL', 'long'] = -89.49733
+
+    geo_coord.at[geo_coord['Location'] == 'Sioux Falls(Mitchell) SD', 'lat'] = 44.01338
+    geo_coord.at[geo_coord['Location'] == 'Sioux Falls(Mitchell) SD', 'long'] = -98.73520
+
+    geo_coord.at[geo_coord['Location'] == 'Wichita-Hutchinson KS', 'lat'] = 33.90593
+    geo_coord.at[geo_coord['Location'] == 'Wichita-Hutchinson KS', 'long'] = -99.03978
+
+    geo_coord.at[geo_coord['Location'] == 'Wichita Falls TX & Lawton OK', 'lat'] = 33.90593
+    geo_coord.at[geo_coord['Location'] == 'Wichita Falls TX & Lawton OK', 'long'] = -99.03978
+
+    # The rows with latitude and longitude coordinates but without Google search counts are already
+    # counted in the cases we modified above. Therefore, the cases deemed 'NaN' will be dropped.
+
+    geo_coord.dropna(inplace=True)
+
+
+
