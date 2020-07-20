@@ -130,30 +130,35 @@ class Trend:
         self.geo_us = self.df_geo
         self.geo_us['geoCode'] = pd.to_numeric(self.geo_us['geoCode'], downcast='signed', errors='coerce')
         self.geo_us = self.geo_us.dropna()
+        geo_us = self.geo_us
+        return geo_us
 
     def histogram_terms(self):
+        self.df_T = self.df_T.iloc[1:,]
         plt.figure(figsize=(14, 10))
         sns.barplot(x='index', y='Sum', data=self.df_T)
         plt.title(label=('Total Concussion-Related Google Search Trends from ' +
                          self.start_date + ' to ' + self.end_date), loc='center', fontsize=20)
         plt.xlabel('Search Terms', fontsize=14)
+        plt.xticks(rotation=45, fontsize=12)
         plt.ylabel('Sum', fontsize=14)
-        plt.xticks(rotation=45)
+        plt.yticks(fontsize=12)
 
     def time_terms(self):
-        plt.figure(figsize=(30, 10))
+        plt.figure(figsize=(20, 10))
         sns.set_style('darkgrid')
         sns.lineplot(data=self.df_copy, dashes=False, palette='bright')
         plt.title('Concussion-Related Google Search Trends over Time', fontsize=20)
         plt.xlabel('Time', fontsize=14)
-        plt.xticks(rotation=45)
+        plt.xticks(rotation=45, fontsize=12)
         plt.ylabel('Degree of Interest (Scaled)', fontsize=14)
+        plt.yticks(fontsize=12)
+
 
 
     # Use latitude and longitude coordinates to map the DMAs in the US.
     # Credit to Mrk-Nguyen for the .json file containing the region codes:
     # https://github.com/Mrk-Nguyen/dmamap/blob/master/nielsengeo.json
-
     def prep_json(self):
         coord = open('nielsengeo.json')
         data = json.load(coord)
@@ -164,12 +169,14 @@ class Trend:
             lat = feature['properties']['latitude']
             long = feature['properties']['longitude']
             dictionary = {
-                'city': city,
+                'Location': city,
                 'lat': lat,
                 'long': long
             }
             coord_dict.append(dictionary)
 
+        coord_dict = pd.DataFrame(coord_dict)
+        return coord_dict
 
 
 # Example
@@ -179,3 +186,14 @@ t = Trend(start_date, end_date)
 
 t.histogram_terms()
 t.time_terms()
+geo = t.data_prep()
+coordinates = t.prep_json()
+
+def merge_geos():
+    geo = geo.drop(['geoCode'], axis=1)
+    coordinates['Location'] = coordinates.Location.str.replace(',', '')
+    geo['Location'] = geo.Location.str.replace(',', '')
+    geo_coord = pd.merge(left=geo, right=coordinates, on='Location', how='outer')
+    new_cols = ['Location', 'lat', 'long', 'concussion', 'mTBI', 'pcs', 'ding', 'football',
+                'NFL', 'bell']
+    geo_coord = geo_coord[new_cols]
