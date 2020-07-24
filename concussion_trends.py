@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 
-
 pytrend = TrendReq()
 
 
@@ -134,18 +133,18 @@ class Trend:
         return geo_us
 
     def histogram_terms(self):
-        self.df_T = self.df_T.iloc[1:,]
-        plt.figure(figsize=(14, 10))
+        self.df_T = self.df_T.iloc[1:, ]
+        plt.figure(figsize=(12, 9))
         sns.barplot(x='index', y='Sum', data=self.df_T)
         plt.title(label=('Total Concussion-Related Google Search Trends from ' +
-                         self.start_date + ' to ' + self.end_date), loc='center', fontsize=20)
+                         self.start_date + ' to ' + self.end_date), loc='center', fontsize=16)
         plt.xlabel('Search Terms', fontsize=14)
         plt.xticks(rotation=45, fontsize=12)
         plt.ylabel('Sum', fontsize=14)
         plt.yticks(fontsize=12)
 
     def time_terms(self):
-        plt.figure(figsize=(18, 8))
+        plt.figure(figsize=(14, 8))
         sns.set_style('darkgrid')
         sns.lineplot(data=self.df_copy, dashes=False, palette='bright')
         plt.title('Concussion-Related Google Search Trends over Time', fontsize=20)
@@ -154,10 +153,10 @@ class Trend:
         plt.ylabel('Degree of Interest (Scaled)', fontsize=14)
         plt.yticks(fontsize=12)
 
-
     # Use latitude and longitude coordinates to map the DMAs in the US.
     # Credit to Mrk-Nguyen for the .json file containing the region codes:
     # https://github.com/Mrk-Nguyen/dmamap/blob/master/nielsengeo.json
+
     def prep_json(self):
         coord = open('nielsengeo.json')
         data = json.load(coord)
@@ -189,7 +188,8 @@ t.time_terms()
 geo = t.data_prep()
 coordinates = t.prep_json()
 
-def merge_geos():
+
+def merge_geos(geo, coordinates):
     geo = geo.drop(['geoCode'], axis=1)
     coordinates['Location'] = coordinates.Location.str.replace(',', '')
     geo['Location'] = geo.Location.str.replace(',', '')
@@ -251,6 +251,8 @@ def merge_geos():
     # counted in the cases we modified above. Therefore, the cases deemed 'NaN' will be dropped.
 
     geo_coord.dropna(inplace=True)
+    return geo, geo_coord
 
 
+merge_geos(geo, coordinates)
 
