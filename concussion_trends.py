@@ -1,10 +1,15 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from dateutil.parser import parse
 from pytrends.request import TrendReq
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib import pyplot as plt
 import seaborn as sns
 import json
+import folium
+import webbrowser
 
 pytrend = TrendReq()
 
@@ -77,6 +82,8 @@ class Trend:
         self.df.set_index('Date')
 
         # Combine columns of similar content or rename variables.
+        # *Unfortunately, I am restricted to a maximum of 200 total scaled search counts total per row.*
+
         self.df['mTBI'] = self.df['mild traumatic brain injury'] + self.df['mTBI']
         self.df.drop(['mild traumatic brain injury'], axis=1, inplace=True)
 
@@ -126,6 +133,7 @@ class Trend:
 
         # Subset data frame to selected only locations in the United States.
         # It appears that US cities are represented by integer values so those will be retained.
+
         self.geo_us = self.df_geo
         self.geo_us['geoCode'] = pd.to_numeric(self.geo_us['geoCode'], downcast='signed', errors='coerce')
         self.geo_us = self.geo_us.dropna()
@@ -133,21 +141,23 @@ class Trend:
         return geo_us
 
     def histogram_terms(self):
+        start_date_new = parse(start_date).strftime('%B %d, %Y')
+        end_date_new = parse(end_date).strftime('%B %d, %Y')
         self.df_T = self.df_T.iloc[1:, ]
         plt.figure(figsize=(12, 9))
-        sns.barplot(x='index', y='Sum', data=self.df_T)
-        plt.title(label=('Total Concussion-Related Google Search Trends from ' +
-                         self.start_date + ' to ' + self.end_date), loc='center', fontsize=16)
+        sns.barplot(x='index', y='Sum', data=self.df_T, palette='bright')
+        plt.title(label=('Total Concussion-related Google Search Trends from ' +
+                         start_date_new + ' to ' + end_date_new), loc='center', fontsize=16)
         plt.xlabel('Search Terms', fontsize=14)
         plt.xticks(rotation=45, fontsize=12)
         plt.ylabel('Sum', fontsize=14)
         plt.yticks(fontsize=12)
 
     def time_terms(self):
-        plt.figure(figsize=(14, 8))
-        sns.set_style('darkgrid')
+        plt.figure(figsize=(16, 8))
+        sns.set_style('whitegrid')
         sns.lineplot(data=self.df_copy, dashes=False, palette='bright')
-        plt.title('Concussion-Related Google Search Trends over Time', fontsize=20)
+        plt.title('Concussion-related Google Search Trends over Time', fontsize=20)
         plt.xlabel('Time', fontsize=14)
         plt.xticks(rotation=45, fontsize=12)
         plt.ylabel('Degree of Interest (Scaled)', fontsize=14)
@@ -185,6 +195,7 @@ t = Trend(start_date, end_date)
 
 t.histogram_terms()
 t.time_terms()
+plt.show()
 geo = t.data_prep()
 coordinates = t.prep_json()
 
@@ -192,18 +203,18 @@ coordinates = t.prep_json()
 def merge_geos(geo, coordinates):
     geo = geo.drop(['geoCode'], axis=1)
     coordinates['Location'] = coordinates.Location.str.replace(',', '')
-    geo['Location'] = geo.Location.str.replace(',', '')
+
+    # Merge 'geo' and 'coordinates' on 'Location', which should be nearly, if not completely, identical.
     geo_coord = pd.merge(left=geo, right=coordinates, on='Location', how='outer')
-    new_cols = ['Location', 'lat', 'long', 'concussion', 'mTBI', 'pcs', 'ding', 'football',
-                'NFL', 'bell']
-    geo_coord = geo_coord[new_cols]
+    geo_coord = geo_coord[['Location', 'lat', 'long', 'concussion', 'mTBI', 'pcs', 'ding', 'football',
+                          'NFL', 'bell']]
 
     # Manually enter the missing ('NaN') values with corresponding values from the 'coordinates'
     # and 'geo' data frames. If they are not available, approximate coordinates by identifying
     # their location with a Google search.
 
     geo_coord.at[geo_coord['Location'] == 'Anchorage AK', 'lat'] = 61.2181
-    geo_coord.at[geo_coord['Location'] == 'Anchorage AK', 'long'] = 149.9003
+    geo_coord.at[geo_coord['Location'] == 'Anchorage AK', 'long'] = -149.9003
 
     geo_coord.at[geo_coord['Location'] == 'Birmingham AL', 'lat'] = 33.50310
     geo_coord.at[geo_coord['Location'] == 'Birmingham AL', 'long'] = -86.86964
@@ -215,7 +226,7 @@ def merge_geos(geo, coordinates):
     geo_coord.at[geo_coord['Location'] == 'Boston MA-Manchester NH', 'long'] = -71.46049
 
     geo_coord.at[geo_coord['Location'] == 'Fairbanks AK', 'lat'] = 64.8378
-    geo_coord.at[geo_coord['Location'] == 'Fairbanks AK', 'long'] = 147.7164
+    geo_coord.at[geo_coord['Location'] == 'Fairbanks AK', 'long'] = -147.7164
 
     geo_coord.at[geo_coord['Location'] == 'Florence-Myrtle Beach SC', 'lat'] = 34.29878
     geo_coord.at[geo_coord['Location'] == 'Florence-Myrtle Beach SC', 'long'] = -79.41977
@@ -224,10 +235,10 @@ def merge_geos(geo, coordinates):
     geo_coord.at[geo_coord['Location'] == 'Greenville-Spartanburg SC-Asheville NC-Anderson SC', 'long'] = -82.69770
 
     geo_coord.at[geo_coord['Location'] == 'Honolulu HI', 'lat'] = 21.3069
-    geo_coord.at[geo_coord['Location'] == 'Honolulu HI', 'long'] = 157.8583
+    geo_coord.at[geo_coord['Location'] == 'Honolulu HI', 'long'] = -157.8583
 
     geo_coord.at[geo_coord['Location'] == 'Juneau AK', 'lat'] = 58.3019
-    geo_coord.at[geo_coord['Location'] == 'Juneau AK', 'long'] = 134.4197
+    geo_coord.at[geo_coord['Location'] == 'Juneau AK', 'long'] = -134.4197
 
     geo_coord.at[geo_coord['Location'] == 'Miami-Ft. Lauderdale FL', 'lat'] = 25.43902
     geo_coord.at[geo_coord['Location'] == 'Miami-Ft. Lauderdale FL', 'long'] = -80.94063
@@ -248,11 +259,45 @@ def merge_geos(geo, coordinates):
     geo_coord.at[geo_coord['Location'] == 'Wichita Falls TX & Lawton OK', 'long'] = -99.03978
 
     # The rows with latitude and longitude coordinates but without Google search counts are already
-    # counted in the cases we modified above. Therefore, the cases deemed 'NaN' will be dropped.
+    # counted in the cases I modified above. Therefore, the cases deemed 'NaN' will be dropped.
 
     geo_coord.dropna(inplace=True)
-    return geo, geo_coord
+    geo_coord['sum'] = geo_coord.iloc[:, 3:9].sum(axis=1)
+    return geo_coord
+
+geo_coord = merge_geos(geo, coordinates)
 
 
-merge_geos(geo, coordinates)
+def map_trends():
+
+    us_lat = 37
+    us_long = -102
+
+    m = folium.Map(
+        location=[us_lat, us_long],
+        zoom_start=5,
+        tiles='cartodbpositron'
+    )
+
+    # I will map the four most frequent searches across time  ('football', 'concussion', 'ding', and 'NFL').
+    for dma in geo_coord.iterrows():
+        folium.CircleMarker(
+            [dma[1]['lat'], dma[1]['long']],
+            popup=(
+                    'Football: ' + str(dma[1]['football']) + '<br/>'
+                    'Concussion: ' + str(dma[1]['concussion']) + '<br/>'
+                    'Ding: ' + str(dma[1]['ding']) + '<br/>'
+                    'NFL: ' + str(dma[1]['NFL']) + '<br/>'
+            ),
+            tooltip=dma[1]['Location'],
+            fill=True,
+            fill_opacity=0.5,
+            radius=12
+        ).add_to(m)
+
+    m.save('test.html')
+    webbrowser.open('test.html', 2)
+
+
+map_trends()
 

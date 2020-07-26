@@ -1,0 +1,212 @@
+Rank,DMA,TV Homes,% of US
+1,New York,6824120,6.377
+2,Los Angeles,5145350,4.808
+3,Chicago,3256400,3.043
+4,Philadelphia,2758330,2.578
+5,Dallas-Ft. Worth,2563320,2.395
+6,San Francisco-Oak-San Jose,2364740,2.21
+7,"Washington, DC (Hagrstwn)",2351930,2.198
+8,Houston,2330180,2.178
+9,Boston (Manchester),2302680,2.152
+10,Atlanta,2269270,2.121
+11,Phoenix (Prescott),1879780,1.757
+12,Tampa-St. Pete (Sarasota),1800600,1.683
+13,Seattle-Tacoma,1764680,1.649
+14,Detroit,1737170,1.623
+15,Minneapolis-St. Paul,1697370,1.586
+16,Miami-Ft. Lauderdale,1642220,1.535
+17,Denver,1532320,1.432
+18,Orlando-Daytona Bch-Melbrn,1492640,1.395
+19,Cleveland-Akron (Canton),1366110,1.277
+20,Sacramnto-Stkton-Modesto,1317500,1.231
+21,Charlotte,1125970,1.052
+22,"Portland, OR",1112500,1.04
+23,St. Louis,1099590,1.028
+24,Pittsburgh,1079900,1.009
+25,Indianapolis,1053830,0.985
+26,Baltimore,1039490,0.971
+27,Raleigh-Durham (Fayetvlle),1025320,0.958
+28,Nashville,983180,0.919
+29,San Diego,981650,0.917
+30,Salt Lake City,952470,0.89
+31,San Antonio,916970,0.857
+32,Kansas City,896850,0.838
+33,Hartford & New Haven,885890,0.828
+34,"Columbus, OH",877490,0.82
+35,Milwaukee,837300,0.782
+36,West Palm Beach-Ft. Pierce,828980,0.775
+37,Cincinnati,828250,0.774
+38,Greenvll-Spart-Ashevll-And,787930,0.736
+39,Las Vegas,743220,0.695
+40,Austin,736770,0.689
+41,Jacksonville,690400,0.645
+42,Norfolk-Portsmth-Newpt Nws,684310,0.639
+43,Oklahoma City,666690,0.623
+44,Birmingham (Ann and Tusc),666170,0.623
+45,Grand Rapids-Kalmzoo-B.Crk,653100,0.61
+46,Albuquerque-Santa Fe,648350,0.606
+47,Harrisburg-Lncstr-Leb-York,641660,0.6
+48,Louisville,636150,0.594
+49,Greensboro-H.Point-W.Salem,635580,0.594
+50,New Orleans,615480,0.575
+51,Memphis,580600,0.543
+52,Buffalo,576710,0.539
+53,Ft. Myers-Naples,564250,0.527
+54,Richmond-Petersburg,555630,0.519
+55,Fresno-Visalia,550860,0.515
+56,Providence-New Bedford,543430,0.508
+57,Mobile-Pensacola (Ft Walt),518740,0.485
+58,Tulsa,509560,0.476
+59,Albany-Schenectady-Troy,500400,0.468
+60,Wilkes Barre-Scranton-Hztn,497830,0.465
+61,Knoxville,491810,0.46
+62,Little Rock-Pine Bluff,472560,0.442
+63,Dayton,445240,0.416
+64,Lexington,425890,0.398
+65,Tucson (Sierra Vista),421820,0.394
+66,Honolulu,414130,0.387
+67,Green Bay-Appleton,394210,0.368
+68,Des Moines-Ames,393470,0.368
+69,Roanoke-Lynchburg,384120,0.359
+70,Spokane,381590,0.357
+71,Omaha,380630,0.356
+72,Wichita-Hutchinson Plus,378930,0.354
+73,"Springfield, MO",373700,0.349
+74,Charleston-Huntington,367290,0.343
+75,"Columbia, SC",365850,0.342
+76,"Rochester, NY",361750,0.338
+77,Flint-Saginaw-Bay City,360530,0.337
+78,Huntsville-Decatur (Flor),351610,0.329
+79,Portland-Auburn,349470,0.327
+80,Toledo,347480,0.325
+81,Madison,343350,0.321
+82,Waco-Temple-Bryan,333300,0.311
+83,Harlingen-Wslco-Brnsvl-McA,331520,0.31
+84,Paducah-Cape Girard-Harsbg,330920,0.309
+85,Colorado Springs-Pueblo,327530,0.306
+86,Shreveport,321190,0.3
+87,Syracuse,320830,0.3
+88,Champaign&Sprngfld-Decatur,315780,0.295
+89,Savannah,315400,0.295
+90,Cedar Rapids-Wtrlo-IWC&Dub,311260,0.291
+91,"Charleston, SC",309250,0.289
+92,Chattanooga,305340,0.285
+93,El Paso (Las Cruces),295070,0.276
+94,Baton Rouge,293610,0.274
+95,"Jackson, MS",284110,0.265
+96,Burlington-Plattsburgh,283080,0.265
+97,Myrtle Beach-Florence,277560,0.259
+98,South Bend-Elkhart,277380,0.259
+99,"Tri-Cities, TN-VA",273310,0.255
+100,Greenville-N.Bern-Washngtn,265820,0.248
+101,Ft. Smith-Fay-Sprngdl-Rgrs,265520,0.248
+102,Boise,261140,0.244
+103,Davenport-R.Island-Moline,259590,0.243
+104,Reno,254040,0.237
+105,Evansville,250120,0.234
+106,Johnstown-Altoona-St Colge,248880,0.233
+107,Lincoln & Hastings-Krny,248550,0.232
+108,Augusta-Aiken,240270,0.225
+109,Tallahassee-Thomasville,239650,0.224
+110,Ft. Wayne,238610,0.223
+111,Springfield-Holyoke,231600,0.216
+112,Lansing,230640,0.216
+113,Sioux Falls (Mitchell),229420,0.214
+114,Tyler-Longview (Lfkn&Ncgd),223590,0.209
+115,Youngstown,220670,0.206
+116,Fargo,218360,0.204
+117,Eugene,218200,0.204
+118,Yakima-Pasco-Rchlnd-Knnwck,215940,0.202
+119,Macon,211110,0.197
+120,Peoria-Bloomington,209320,0.196
+121,Traverse City-Cadillac,209210,0.196
+122,Montgomery-Selma,207020,0.193
+123,"Lafayette, LA",203470,0.19
+124,Monterey-Salinas,202080,0.189
+125,Bakersfield,200460,0.187
+126,SantaBarbra-SanMar-SanLuOb,195870,0.183
+127,Wilmington,189830,0.177
+128,Corpus Christi,188210,0.176
+129,La Crosse-Eau Claire,185920,0.174
+130,"Columbus, GA (Opelika, AL)",183620,0.172
+131,Chico-Redding,171710,0.16
+132,Amarillo,162010,0.151
+133,Columbus-Tupelo-W Pnt-Hstn,161740,0.151
+134,Wausau-Rhinelander,158720,0.148
+135,Medford-Klamath Falls,155130,0.145
+136,Salisbury,154900,0.145
+137,Columbia-Jefferson City,154210,0.144
+138,Rockford,152400,0.142
+139,Duluth-Superior,150930,0.141
+140,Monroe-El Dorado,148210,0.139
+141,Palm Springs,147650,0.138
+142,Lubbock,143380,0.134
+143,Beaumont-Port Arthur,143130,0.134
+144,Topeka,142240,0.133
+145,Odessa-Midland,141600,0.132
+146,Minot-Bsmrck-Dcknsn (Wlstn),136930,0.128
+147,Wichita Falls & Lawton,132830,0.124
+148,Sioux City,131210,0.123
+149,Panama City,130350,0.122
+150,Rochestr-Mason City-Austin,129600,0.121
+151,Anchorage,125510,0.117
+152,Erie,125340,0.117
+153,Joplin-Pittsburg,121260,0.113
+154,"Albany, GA",120240,0.112
+155,Biloxi-Gulfport,116300,0.109
+156,Gainesville,114400,0.107
+157,Wheeling-Steubenville,114140,0.107
+158,Sherman-Ada,112160,0.105
+159,Bangor,111070,0.104
+160,Terre Haute,110480,0.103
+161,Binghamton,106510,0.1
+162,Idaho Fals-Pocatllo (Jcksn),101030,0.094
+163,Missoula,100830,0.094
+164,Abilene-Sweetwater,100790,0.094
+165,Yuma-El Centro,99710,0.093
+166,Bluefield-Beckley-Oak Hill,98530,0.092
+167,Hattiesburg-Laurel,96000,0.09
+168,Billings,91950,0.086
+169,Rapid City,86610,0.081
+170,Lake Charles,85970,0.08
+171,Dothan,85140,0.08
+172,Utica,84750,0.079
+173,Clarksburg-Weston,84680,0.079
+174,Quincy-Hannibal-Keokuk,84040,0.079
+175,Harrisonburg,84030,0.079
+176,"Jackson, TN",78940,0.074
+177,Bowling Green,72620,0.068
+178,"Alexandria, LA",72530,0.068
+178,Elmira (Corning),72530,0.068
+180,Marquette,71920,0.067
+181,Watertown,71180,0.067
+182,Charlottesville,70490,0.066
+183,Jonesboro,69470,0.065
+184,Laredo,65330,0.061
+185,"Bend, OR",63720,0.06
+186,Butte-Bozeman,63320,0.059
+187,"Lafayette, IN",61520,0.057
+188,Grand Junction-Montrose,61390,0.057
+189,Lima,56850,0.053
+190,Meridian,56790,0.053
+191,Twin Falls,55050,0.051
+192,Great Falls,53210,0.05
+193,Parkersburg,51240,0.048
+194,Greenwood-Greenville,50270,0.047
+195,San Angelo,50220,0.047
+196,Cheyenne-Scottsbluff,48930,0.046
+197,Eureka,47550,0.044
+198,Mankato,46920,0.044
+199,Casper-Riverton,43760,0.041
+200,St. Joseph,38780,0.036
+201,Ottumwa-Kirksville,37440,0.035
+202,Victoria,28500,0.027
+203,Fairbanks,27970,0.026
+204,Zanesville,27650,0.026
+205,Helena,25720,0.024
+206,Presque Isle,22340,0.021
+207,Juneau,18730,0.017
+208,Alpena,14280,0.013
+209,North Platte,12010,0.011
+210,Glendive,3630,0.003
+,NSI Total U.S.,107007910,100
