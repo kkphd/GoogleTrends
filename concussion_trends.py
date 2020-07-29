@@ -83,7 +83,6 @@ class Trend:
 
         # Combine columns of similar content or rename variables.
         # *Unfortunately, I am restricted to a maximum of 200 total scaled search counts total per row.*
-
         self.df['mTBI'] = self.df['mild traumatic brain injury'] + self.df['mTBI']
         self.df.drop(['mild traumatic brain injury'], axis=1, inplace=True)
 
@@ -133,7 +132,6 @@ class Trend:
 
         # Subset data frame to selected only locations in the United States.
         # It appears that US cities are represented by integer values so those will be retained.
-
         self.geo_us = self.df_geo
         self.geo_us['geoCode'] = pd.to_numeric(self.geo_us['geoCode'], downcast='signed', errors='coerce')
         self.geo_us = self.geo_us.dropna()
@@ -141,11 +139,13 @@ class Trend:
         return geo_us
 
     def histogram_terms(self):
+        colors = ['violet', 'blue', 'red', 'green', 'black', 'orange', 'yellow']
         start_date_new = parse(start_date).strftime('%B %d, %Y')
         end_date_new = parse(end_date).strftime('%B %d, %Y')
         self.df_T = self.df_T.iloc[1:, ]
+        self.df_T.sort_values('Sum', ascending=False, inplace=True)
         plt.figure(figsize=(12, 9))
-        sns.barplot(x='index', y='Sum', data=self.df_T, palette='bright')
+        sns.barplot(x='index', y='Sum', data=self.df_T, palette=colors)
         plt.title(label=('Total Concussion-related Google Search Trends from ' +
                          start_date_new + ' to ' + end_date_new), loc='center', fontsize=16)
         plt.xlabel('Search Terms', fontsize=14)
@@ -156,7 +156,11 @@ class Trend:
     def time_terms(self):
         plt.figure(figsize=(16, 8))
         sns.set_style('whitegrid')
-        sns.lineplot(data=self.df_copy, dashes=False, palette='bright')
+
+        # The color sequence for the histogram is: blue (football), orange (ding), green (concussion), and
+        # red (NFL), so I will follow that some structure for the lineplot.
+        colors = ['violet', 'blue', 'red', 'green', 'black', 'orange', 'yellow']
+        sns.lineplot(data=self.df_copy, dashes=False, palette=colors)
         plt.title('Concussion-related Google Search Trends over Time', fontsize=20)
         plt.xlabel('Time', fontsize=14)
         plt.xticks(rotation=45, fontsize=12)
@@ -166,7 +170,6 @@ class Trend:
     # Use latitude and longitude coordinates to map the DMAs in the US.
     # Credit to Mrk-Nguyen for the .json file containing the region codes:
     # https://github.com/Mrk-Nguyen/dmamap/blob/master/nielsengeo.json
-
     def prep_json(self):
         coord = open('nielsengeo.json')
         data = json.load(coord)
@@ -187,32 +190,16 @@ class Trend:
         return coord_dict
 
 
-# Example
-
-start_date = "2010-07-01"
-end_date = "2020-07-01"
-t = Trend(start_date, end_date)
-
-t.histogram_terms()
-t.time_terms()
-plt.show()
-geo = t.data_prep()
-coordinates = t.prep_json()
-
-
-def merge_geos(geo, coordinates):
-    geo = geo.drop(['geoCode'], axis=1)
-    coordinates['Location'] = coordinates.Location.str.replace(',', '')
+def merge_geos(g, coords):
+    g = g.drop(['geoCode'], axis=1)
+    coords['Location'] = coords.Location.str.replace(',', '')
 
     # Merge 'geo' and 'coordinates' on 'Location', which should be nearly, if not completely, identical.
-    geo_coord = pd.merge(left=geo, right=coordinates, on='Location', how='outer')
-    geo_coord = geo_coord[['Location', 'lat', 'long', 'concussion', 'mTBI', 'pcs', 'ding', 'football',
-                          'NFL', 'bell']]
+    geo_coord = pd.merge(left=g, right=coords, on='Location', how='outer')
 
     # Manually enter the missing ('NaN') values with corresponding values from the 'coordinates'
     # and 'geo' data frames. If they are not available, approximate coordinates by identifying
     # their location with a Google search.
-
     geo_coord.at[geo_coord['Location'] == 'Anchorage AK', 'lat'] = 61.2181
     geo_coord.at[geo_coord['Location'] == 'Anchorage AK', 'long'] = -149.9003
 
@@ -260,44 +247,119 @@ def merge_geos(geo, coordinates):
 
     # The rows with latitude and longitude coordinates but without Google search counts are already
     # counted in the cases I modified above. Therefore, the cases deemed 'NaN' will be dropped.
-
     geo_coord.dropna(inplace=True)
-    geo_coord['sum'] = geo_coord.iloc[:, 3:9].sum(axis=1)
+    geo_coord['total'] = geo_coord.iloc[:, 3:9].sum(axis=1)
     return geo_coord
 
-geo_coord = merge_geos(geo, coordinates)
 
-
-def map_trends():
-
+def map_terms(g_coord):
+    # Constants.
+    states = 'us-states.json'
     us_lat = 37
     us_long = -102
 
+    # Extract the state from 'Location' so searches conducted within a state can be summed and then mapped
+    # in folium. ALthough some cities overlap with different states, for simplicity's sake, I will only
+    # map the last state in the cell.
+    g_coord['id'] = g_coord['Location'].str[-2:]
+    g_coord = g_coord[['Location', 'id', 'concussion', 'mTBI', 'pcs', 'ding', 'football',
+                       'NFL', 'bell', 'total']]
+    g_coord = g_coord.sort_values('id')
+
+    # 'Washington DC/Hagerstown MD' is incorrected labeled as state 'D)' so I will rename that cell.
+    g_coord.loc[g_coord.id == 'D)', 'id'] = 'MD'
+
+    # Since I will aggregate search trends across states, I will make 'id' the key variable.
+    # Group search terms by state and sum the total number of searches per term.
+    g_coord.drop(['Location'], axis=1, inplace=True)
+    g_coord = g_coord.groupby('id', as_index=False).sum()
+
+
+    # Due to how the DMA locations are coded, Vermont, Rhode Island, New Jersey, and Delaware
+    # are not included in the dataframe and are thus whited out.
+
+    # Map 'football.'
     m = folium.Map(
         location=[us_lat, us_long],
-        zoom_start=5,
-        tiles='cartodbpositron'
+        zoom_start=4,
+        tiles='cartodbpositron',
     )
 
-    # I will map the four most frequent searches across time  ('football', 'concussion', 'ding', and 'NFL').
-    for dma in geo_coord.iterrows():
-        folium.CircleMarker(
-            [dma[1]['lat'], dma[1]['long']],
-            popup=(
-                    'Football: ' + str(dma[1]['football']) + '<br/>'
-                    'Concussion: ' + str(dma[1]['concussion']) + '<br/>'
-                    'Ding: ' + str(dma[1]['ding']) + '<br/>'
-                    'NFL: ' + str(dma[1]['NFL']) + '<br/>'
-            ),
-            tooltip=dma[1]['Location'],
-            fill=True,
-            fill_opacity=0.5,
-            radius=12
-        ).add_to(m)
+    # Map 'football' (purple).
+    folium.Choropleth(
+        geo_data=states,
+        name='Football',
+        data=g_coord,
+        nan_fill_color='white',
+        columns=['id', 'football'],
+        key_on='feature.id',
+        fill_color='BuPu',
+        fill_opacity='0.7',
+        line_color='black',
+        line_opacity='0.5',
+        legend_name='Football (degree of interest)'
+    ).add_to(m)
 
-    m.save('test.html')
-    webbrowser.open('test.html', 2)
+    # Map 'ding' (blue).
+    folium.Choropleth(
+        geo_data=states,
+        name='Ding',
+        data=g_coord,
+        nan_fill_color='white',
+        columns=['id', 'football'],
+        key_on='feature.id',
+        fill_color='PuBu',
+        fill_opacity='0.7',
+        line_color='black',
+        line_opacity='0.5',
+        legend_name='Ding (degree of interest)'
+    ).add_to(m)
+
+    # Map 'concussion' (red).
+    folium.Choropleth(
+        geo_data=states,
+        name='Concussion',
+        data=g_coord,
+        nan_fill_color='white',
+        columns=['id', 'concussion'],
+        key_on='feature.id',
+        fill_color='OrRd',
+        fill_opacity='0.7',
+        line_color='black',
+        line_opacity='0.5',
+        legend_name='Concussion (degree of interest)'
+    ).add_to(m)
+
+    # Map 'NFL' (green).
+    folium.Choropleth(
+        geo_data=states,
+        name='NFL',
+        data=g_coord,
+        nan_fill_color='white',
+        columns=['id', 'NFL'],
+        key_on='feature.id',
+        fill_color='YlGn',
+        fill_opacity='0.7',
+        line_color='black',
+        line_opacity='0.5',
+        legend_name='NFL (degree of interest)'
+    ).add_to(m)
 
 
-map_trends()
+    folium.LayerControl(position='topright', collapsed=False).add_to(m)
+    m.save('map.html')
+    webbrowser.open('map.html', 2)
 
+
+# Example
+start_date = "2010-07-01"
+end_date = "2020-07-01"
+t = Trend(start_date, end_date)
+
+t.histogram_terms()
+t.time_terms()
+plt.show()
+geo = t.data_prep()
+coordinates = t.prep_json()
+geo_coord = merge_geos(geo, coordinates)
+map_terms(geo_coord)
