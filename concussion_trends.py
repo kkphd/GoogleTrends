@@ -144,7 +144,7 @@ class Trend:
         end_date_new = parse(end_date).strftime('%B %d, %Y')
         self.df_T = self.df_T.iloc[1:, ]
         self.df_T.sort_values('Sum', ascending=False, inplace=True)
-        plt.figure(figsize=(12, 9))
+        plt.figure(figsize=(12, 10))
         sns.barplot(x='index', y='Sum', data=self.df_T, palette=colors)
         plt.title(label=('Total Concussion-related Google Search Trends from ' +
                          start_date_new + ' to ' + end_date_new), loc='center', fontsize=16)
@@ -152,6 +152,7 @@ class Trend:
         plt.xticks(rotation=45, fontsize=12)
         plt.ylabel('Sum', fontsize=14)
         plt.yticks(fontsize=12)
+        plt.savefig('histogram.png')
 
     def time_terms(self):
         plt.figure(figsize=(16, 8))
@@ -159,13 +160,15 @@ class Trend:
 
         # The color sequence for the histogram is: blue (football), orange (ding), green (concussion), and
         # red (NFL), so I will follow that some structure for the lineplot.
-        colors = ['violet', 'blue', 'red', 'green', 'black', 'orange', 'yellow']
+        colors = ['red', 'black', 'orange', 'blue', 'violet', 'green', 'yellow']
+        plt.plot(figsize=(12,10))
         sns.lineplot(data=self.df_copy, dashes=False, palette=colors)
         plt.title('Concussion-related Google Search Trends over Time', fontsize=20)
         plt.xlabel('Time', fontsize=14)
         plt.xticks(rotation=45, fontsize=12)
         plt.ylabel('Degree of Interest (Scaled)', fontsize=14)
         plt.yticks(fontsize=12)
+        plt.savefig('timeplot.png')
 
     # Use latitude and longitude coordinates to map the DMAs in the US.
     # Credit to Mrk-Nguyen for the .json file containing the region codes:
@@ -349,17 +352,19 @@ def map_terms(g_coord):
     folium.LayerControl(position='topright', collapsed=False).add_to(m)
     m.save('map.html')
     webbrowser.open('map.html', 2)
-
+    return g_coord
 
 # Example
 start_date = "2010-07-01"
 end_date = "2020-07-01"
+
+
 t = Trend(start_date, end_date)
 
 t.histogram_terms()
 t.time_terms()
-plt.show()
 geo = t.data_prep()
 coordinates = t.prep_json()
 geo_coord = merge_geos(geo, coordinates)
-map_terms(geo_coord)
+df = map_terms(geo_coord)
+
