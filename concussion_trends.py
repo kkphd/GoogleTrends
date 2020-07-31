@@ -3,8 +3,6 @@ import numpy as np
 from datetime import datetime
 from dateutil.parser import parse
 from pytrends.request import TrendReq
-import matplotlib
-matplotlib.use('TkAgg')
 from matplotlib import pyplot as plt
 import seaborn as sns
 import json
@@ -17,10 +15,10 @@ pytrend = TrendReq()
 class Trend:
 
     # Input dates as YYYY-MM-DD
-    def __init__(self, start_date, end_date):
-        self.start_date = str(start_date)
-        self.end_date = str(end_date)
-        self.time_period = start_date + ' ' + end_date
+    def __init__(self, start_date: datetime, end_date: datetime):
+        self.start_date = start_date
+        self.end_date = end_date
+        self.time_period = str(start_date) + ' ' + str(end_date)
         self.df1 = None
         self.cols1 = None
         self.df1_metro = None
@@ -43,6 +41,10 @@ class Trend:
         self.adjust_df()
         self.merge_geo_df()
         self.data_prep()
+        self.hist_fig = None
+        self.hist_ax = None
+        self.time_fig = None
+        self.time_ax = None
         analysis_date = datetime.now()
         print('Data was collected on ' + analysis_date.strftime("%B %d, %Y") + ' at ' +
               analysis_date.strftime("%H:%M:%S") + ' for searches between ' + start_date +
@@ -136,39 +138,32 @@ class Trend:
         self.geo_us['geoCode'] = pd.to_numeric(self.geo_us['geoCode'], downcast='signed', errors='coerce')
         self.geo_us = self.geo_us.dropna()
         geo_us = self.geo_us
-        return geo_us
+        return geo_us, self.df
 
     def histogram_terms(self):
+        self.hist_fig, self.hist_ax = plt.subplots(figsize=(12, 10))
         colors = ['violet', 'blue', 'red', 'green', 'black', 'orange', 'yellow']
         start_date_new = parse(start_date).strftime('%B %d, %Y')
         end_date_new = parse(end_date).strftime('%B %d, %Y')
         self.df_T = self.df_T.iloc[1:, ]
         self.df_T.sort_values('Sum', ascending=False, inplace=True)
-        plt.figure(figsize=(12, 10))
-        sns.barplot(x='index', y='Sum', data=self.df_T, palette=colors)
-        plt.title(label=('Total Concussion-related Google Search Trends from ' +
-                         start_date_new + ' to ' + end_date_new), loc='center', fontsize=16)
-        plt.xlabel('Search Terms', fontsize=14)
-        plt.xticks(rotation=45, fontsize=12)
-        plt.ylabel('Sum', fontsize=14)
-        plt.yticks(fontsize=12)
-        plt.savefig('histogram.png')
+        sns.barplot(x='index', y='Sum', data=self.df_T, palette=colors, ax=self.hist_ax)
+        self.hist_ax.set_title(f'Total Concussion-related Google Search Trends from {start_date_new} to {end_date_new}',
+                               fontsize=16, loc='center')
+        self.hist_ax.set_xlabel('Search Terms', fontsize=14)
+        self.hist_ax.set_ylabel('Sum', fontsize=14)
 
     def time_terms(self):
-        plt.figure(figsize=(16, 8))
+        self.time_fig, self.time_ax = plt.subplots(figsize=(16, 8))
         sns.set_style('whitegrid')
 
         # The color sequence for the histogram is: blue (football), orange (ding), green (concussion), and
         # red (NFL), so I will follow that some structure for the lineplot.
         colors = ['red', 'black', 'orange', 'blue', 'violet', 'green', 'yellow']
-        plt.plot(figsize=(12,10))
-        sns.lineplot(data=self.df_copy, dashes=False, palette=colors)
-        plt.title('Concussion-related Google Search Trends over Time', fontsize=20)
-        plt.xlabel('Time', fontsize=14)
-        plt.xticks(rotation=45, fontsize=12)
-        plt.ylabel('Degree of Interest (Scaled)', fontsize=14)
-        plt.yticks(fontsize=12)
-        plt.savefig('timeplot.png')
+        sns.lineplot(data=self.df_copy, dashes=False, palette=colors, ax=self.time_ax)
+        self.time_ax.set_title('Concussion-related Google Search Trends over Time', fontsize=20)
+        self.time_ax.set_xlabel('Time', fontsize=14)
+        self.time_ax.set_ylabel('Degree of Interest (Scaled)', fontsize=14)
 
     # Use latitude and longitude coordinates to map the DMAs in the US.
     # Credit to Mrk-Nguyen for the .json file containing the region codes:
@@ -191,7 +186,6 @@ class Trend:
 
         coord_dict = pd.DataFrame(coord_dict)
         return coord_dict
-
 
 def merge_geos(g, coords):
     g = g.drop(['geoCode'], axis=1)
@@ -354,17 +348,39 @@ def map_terms(g_coord):
     webbrowser.open('map.html', 2)
     return g_coord
 
+
+
+def df_eda(final_dataframe, longitudinal_data):
+    # Descriptive statistics of the search terms.
+    descriptive = pd.DataFrame(final_dataframe.describe())
+    descriptive_T = descriptive.T
+
+    # Determine the dates for maximum and minimum values.
+    # longitudinal_data = longitudinal_data.reset_index(['Date'])
+    longitudinal_data = longitudinal_data.drop(['mTBI', 'pcs', 'bell'], axis=1)
+    columns = longitudinal_data.columns.values[1:]
+    data_details = pd.DataFrame()
+    for col in columns:
+        smallest = pd.DataFrame(longitudinal_data.nsmallest(1, keep='all', columns=col))
+        smallest['Association'] = f'smallest - {col}'
+        largest = pd.DataFrame(longitudinal_data.nlargest(1, keep='all', columns=col))
+        largest['Association'] = f'largest - {col}'
+        data_details = pd.concat([data_details, smallest, largest])
+
+    return descriptive_T, data_details
+
 # Example
 start_date = "2010-07-01"
 end_date = "2020-07-01"
-
 
 t = Trend(start_date, end_date)
 
 t.histogram_terms()
 t.time_terms()
-geo = t.data_prep()
+geo, time_data = t.data_prep()
 coordinates = t.prep_json()
 geo_coord = merge_geos(geo, coordinates)
 df = map_terms(geo_coord)
+desc_stats, min_max = df_eda(df, time_data)
+
 
