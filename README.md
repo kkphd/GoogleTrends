@@ -3,7 +3,7 @@
 [Link to html map of Concussion-related Google searches by kkphd](https://bit.ly/3ghv5va)
 
 
-##  Tracking Public Interest in Sports-related Concussion using Google Trends
+##  Real-world Assessment of Public Interest in Concussion using Google Trends
 
 Mild traumatic brain injury, also known as concussion, has garnered significant interest over the years, especially
 due to concerns about sports-related head injury in children and adults. Heightened public awareness of head injury
