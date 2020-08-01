@@ -256,7 +256,7 @@ def map_terms(g_coord):
     us_long = -102
 
     # Extract the state from 'Location' so searches conducted within a state can be summed and then mapped
-    # in folium. ALthough some cities overlap with different states, for simplicity's sake, I will only
+    # in folium. Although some cities overlap with different states, for simplicity's sake, I will only
     # map the last state in the cell.
     g_coord['id'] = g_coord['Location'].str[-2:]
     g_coord = g_coord[['Location', 'id', 'concussion', 'mTBI', 'pcs', 'ding', 'football',
@@ -275,7 +275,7 @@ def map_terms(g_coord):
     # Due to how the DMA locations are coded, Vermont, Rhode Island, New Jersey, and Delaware
     # are not included in the dataframe and are thus whited out.
 
-    # Map 'football.'
+    # Create the base map.
     m = folium.Map(
         location=[us_lat, us_long],
         zoom_start=4,
