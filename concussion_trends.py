@@ -349,7 +349,6 @@ def map_terms(g_coord):
     return g_coord
 
 
-
 def df_eda(final_dataframe, longitudinal_data):
     # Descriptive statistics of the search terms.
     descriptive = pd.DataFrame(final_dataframe.describe())
