@@ -17,8 +17,8 @@ patients' interest in such symptoms, etc.).
 
 
 
- ![Alt text](https://thumbor.forbes.com/thumbor/960x0/https%3A%2F%2Fblogs-images.forbes.com%2Fscottmendelson%2Ffiles%2F2015%2F11%2Fconcussions-banner.jpg)
+ ![Alt text](https://myoworx.com/wp-content/uploads/2015/10/concussion-will-smith.jpg)
 
 
 Image taken from the following website:
-> https://en.wikipedia.org/wiki/Concussion_(2015_film)#/media/File:Concussion_poster.jpg
+> https://myoworx.com/wp-content/uploads/2015/10/concussion-will-smith.jpg
