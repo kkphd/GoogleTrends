@@ -1,6 +1,6 @@
 
 #### **The html map for concussion-related Google search terms is located here:**
-[Link to html map of Concussion-related Google searches by kkphd](https://bit.ly/3ghv5va)
+[Link to html map of concussion-related Google searches by kkphd](https://bit.ly/3ghv5va)
 
 
 ##  Real-world Assessment of Public Interest in Concussion using Google Trends
