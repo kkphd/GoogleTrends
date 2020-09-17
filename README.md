@@ -1,7 +1,7 @@
 
 #### **The Jupyter Notebook for this project is located here:** [Link to Jupyter Notebook of concussion project by kkphd](https://bit.ly/2FufjzZ)
 
-#### **The html map for concussion-related Google search terms is located here:** [Link to html map of concussion project by kkphd](https://bit.ly/3ghv5va)
+#### **The html map for this project is located here:** [Link to html map of concussion project by kkphd](https://bit.ly/3ghv5va)
 
 ##  Real-world Assessment of Public Interest in Concussion using Google Trends
 
