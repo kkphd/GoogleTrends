@@ -17,8 +17,8 @@ patients' interest in such symptoms, etc.).
 
 
 
- ![Alt text](https://myoworx.com/wp-content/uploads/2015/10/concussion-will-smith.jpg)
+ ![Alt text](https://www.slatervecchio.com/wp-content/uploads/2015/09/CONCUSSION-6.png)
 
 
 Image taken from the following website:
-> https://myoworx.com/wp-content/uploads/2015/10/concussion-will-smith.jpg
+> https://www.slatervecchio.com/wp-content/uploads/2015/09/CONCUSSION-6.png
